@@ -1,6 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'CreditScreen.dart';
+import 'GameScreen.dart';
+import 'GameScreenHard.dart';
+import 'GameScreenMedium.dart';
 
 class FirstScreen extends StatelessWidget {
   const FirstScreen({Key? key}) : super(key: key);
@@ -18,14 +24,10 @@ class FirstScreen extends StatelessWidget {
             children: [
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "MainScreen");
-                  },
-                  child: const Text("Juego")),
-              TextButton(
-                  onPressed: () {
+                    checkNewRecord();
                     Navigator.pushNamed(context, "CreditScreen");
                   },
-                  child: const Text("Créditos"))
+                  child: const Text("Créditos")),
             ],
           ),
         ),
@@ -42,13 +44,49 @@ class FirstScreen extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  "Bienvenido", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)
-                ),
-                TextButton(onPressed: () {}, child: Text("Jugar", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),)
+                Text("Bienvenido",
+                    style:
+                        TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        GameScreen.movimientos = 0;
+                        Navigator.pushNamed(context, "GameScreen");
+                      },
+                      child: Text("Fácil",
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        GameScreenMedium.movimientosMedium = 0;
+                        Navigator.pushNamed(context, "GameScreenMedium");
+                      },
+                      child: Text("Medio",
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        GameScreenHard.movimientosHard = 0;
+                        Navigator.pushNamed(context, "GameScreenHard");
+                      },
+                      child: Text("Dificil",
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                )
               ],
             ),
           ]),
         ));
+  }
+  Future<void> checkNewRecord() async {
+    final prefs = await SharedPreferences.getInstance();
+    CreditScreen.recordFacil = (prefs.getInt('movimientos') ?? 9999);
+    CreditScreen.recordMedio = (prefs.getInt('movimientosMedium') ?? 9999);
+    CreditScreen.recordDificil = (prefs.getInt('movimientosDificil') ?? 9999);
   }
 }
